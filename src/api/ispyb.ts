@@ -142,3 +142,7 @@ export function updateSampleChangerLocation({ proposalName, containerId, beamlin
     data: `sampleChangerLocation=${position}`,
   };
 }
+
+export function getLabContacts({ proposalName }: { proposalName: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/labcontact/list` };
+}
