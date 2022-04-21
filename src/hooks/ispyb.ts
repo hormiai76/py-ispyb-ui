@@ -27,7 +27,7 @@ import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGr
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
-import { LabContact, Parcel, Shipment } from 'pages/shipping/model';
+import { LabContact, Parcel } from 'pages/shipping/model';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
