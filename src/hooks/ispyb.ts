@@ -20,13 +20,14 @@ import {
   getProposalSessionsWhithDates,
   getSessionsManagerDates,
   getLabContacts,
+  getShipments,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
-import { LabContact } from 'pages/shipping/model';
+import { LabContact, Parcel, Shipment } from 'pages/shipping/model';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -135,4 +136,8 @@ export function useDewars({ proposalName }: { proposalName: string }) {
 
 export function useLabContacts({ proposalName }: { proposalName: string }) {
   return doGet<LabContact[]>(getLabContacts({ proposalName }).url);
+}
+
+export function useShipments({ proposalName }: { proposalName: string }) {
+  return doGet<Parcel[]>(getShipments({ proposalName }).url);
 }
