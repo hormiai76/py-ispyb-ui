@@ -21,13 +21,14 @@ import {
   getSessionsManagerDates,
   getLabContacts,
   getShipments,
+  getShipping,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
-import { LabContact, Parcel } from 'pages/shipping/model';
+import { Container, LabContact, Parcel, Shipping } from 'pages/shipping/model';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -139,5 +140,9 @@ export function useLabContacts({ proposalName }: { proposalName: string }) {
 }
 
 export function useShipments({ proposalName }: { proposalName: string }) {
-  return doGet<Parcel[]>(getShipments({ proposalName }).url);
+  return doGet<Container[]>(getShipments({ proposalName }).url);
+}
+
+export function useShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return doGet<Shipping>(getShipping({ proposalName, shippingId }).url);
 }
