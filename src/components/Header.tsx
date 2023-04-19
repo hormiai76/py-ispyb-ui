@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useController } from 'rest-hooks';
 import { Navbar, NavDropdown, Container, Nav, Button } from 'react-bootstrap';
 import { PersonBadge } from 'react-bootstrap-icons';
