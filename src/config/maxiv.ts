@@ -3,7 +3,7 @@ import { SiteConfig } from 'config/definitions/sites';
 export const MAXIV: SiteConfig[] = [
   {
     name: 'MAXIV-java',
-    description: 'For MX/EM',
+    description: 'For MX',
     javaName: 'MAXIV',
     host: 'https://ispyb.maxiv.lu.se',
     apiPrefix: '/ispyb/ispyb-ws/rest',
