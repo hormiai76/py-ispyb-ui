@@ -12,7 +12,7 @@ import { ProposalDetail, ProposalSample } from 'legacy/pages/model';
 import Handsontable from 'handsontable';
 import 'handsontable/dist/handsontable.full.css';
 import HotTable, { HotColumn } from '@handsontable/react';
-import _, { min } from 'lodash';
+import _, { forEach, min } from 'lodash';
 import { EXPERIMENT_TYPES } from 'legacy/constants/experiments';
 
 import './importshipping.scss';
@@ -40,6 +40,7 @@ import { useAuth } from 'hooks/useAuth';
 import { SPACE_GROUPS } from 'helpers/spacegroups';
 import { registerAllCellTypes } from 'handsontable/cellTypes';
 import { registerAllPlugins } from 'handsontable/plugins';
+import { useShipmentColumns } from 'legacy/hooks/site';
 
 registerAllCellTypes();
 registerAllPlugins();
@@ -48,6 +49,8 @@ type Param = {
   proposalName: string;
   shippingId: string;
 };
+
+let FIELDS : string[];
 
 const getErrorsForCell = (errors: Error[], row: number, col: number) => {
   const res = errors.filter((e) => e.row === row && e.col === col);
@@ -63,7 +66,10 @@ const getAutoReplacementsForCell = (
 };
 
 export function ImportShippingFromCSV() {
+  
   const { proposalName = '', shippingId = '' } = useParams<Param>();
+
+  
 
   const { data: shipping, isError: shippingError } = useShipping({
     proposalName,
@@ -99,6 +105,8 @@ export function ImportShippingFromCSV() {
     return errorPage('Proposal does not exist.');
   }
 
+  
+
   return (
     <Col>
       <Alert variant="primary">
@@ -132,6 +140,8 @@ export function CSVShippingImporter({
   proposalSamples: ProposalSample[];
   proposalName: string;
 }) {
+  const columns = useShipmentColumns();
+  //const [columns, setColumns] = useState(useShipmentColumns());
   const [data, setData] = useState<Line[] | undefined>(undefined);
   const [autoReplacements, setAutoReplacements] = useState<AutoReplacement[]>(
     []
@@ -143,7 +153,8 @@ export function CSVShippingImporter({
     const autoReplacements = autofixShipping(
       newData,
       shipping,
-      proposalSamples
+      proposalSamples,
+      columns
     );
     setData(newData);
     setAutoReplacements(autoReplacements);
@@ -177,7 +188,7 @@ export function CSVShippingImporter({
 
   const importData = () => {
     if (data) {
-      const parcels = parseShippingCSV(data, proposal);
+      const parcels = parseShippingCSV(data, proposal, columns);
       const req = addDewarsToShipping({
         proposalName,
         shippingId: shipping.shippingId,
@@ -202,6 +213,8 @@ export function CSVShippingImporter({
     comments: '#',
   };
 
+
+
   let dataElem = <></>;
 
   if (done) {
@@ -222,7 +235,8 @@ export function CSVShippingImporter({
       replacedData,
       shipping,
       proposal,
-      proposalSamples
+      proposalSamples,
+      columns
     );
 
     dataElem = (
@@ -372,12 +386,170 @@ const getClassForValue = (
   }
 };
 
+export function initColumns(columnsCSV:string[], proposal:ProposalDetail) : Handsontable.ColumnSettings[] {
+  let results : Handsontable.ColumnSettings[] = [];
+  
+  columnsCSV.forEach((col) => {
+  
+    switch(col){
+      case 'parcel name':
+        results.push({title: 'Parcel<br />Name'});
+        break;
+      case 'container name':
+        results.push({title: 'Container<br />Name'});
+        break;
+      case 'container type':
+        results.push({
+          title: 'Container<br />Type',
+          type: 'autocomplete',
+          source: CONTAINER_TYPES.map((c) => String(c)),
+          strict: true,
+          allowInvalid: false,
+          filter: true,
+        });
+        break;
+      case 'container position':
+        results.push({title: 'Container<br />Position'});
+        break;
+      case 'protein acronym':
+        results.push({
+          title: 'Protein<br />Acronym',
+          type: 'autocomplete',
+          source: _(proposal.proteins)
+            .map((p) => p.acronym)
+            .uniq()
+            .value(),
+          strict: true,
+          allowInvalid: false,
+          filter: true,
+        });
+        break;
+      case 'sample acronym':
+        results.push({title: 'Sample<br />Acronym'});
+        break;
+      case 'pin barcode':
+        results.push({title: 'Pin<br />Barcode'});
+        break;
+      case 'SPG':
+        results.push({
+          title: 'Spacegroup',
+          source: [
+            '',
+            ..._(SPACE_GROUPS)
+              .map((v) => v.name)
+              .value(),
+          ],
+          type: 'autocomplete',
+          filter: true,
+          strict: true,
+          allowInvalid: false,
+        });
+        break;
+      case 'cellA':
+        results.push({title: 'A'});
+        break;
+      case 'cellB':
+        results.push({title: 'B'});
+        break;
+      case 'cellC':
+        results.push({title: 'C'});
+        break;
+      case 'cellAlpha':
+        results.push({title: 'Alpha'});
+        break;
+      case 'cellBeta':
+        results.push({title: 'Beta'});
+        break;
+      case 'cellGamma':
+        results.push({title: 'Gamma'});
+        break;
+      case 'experimentType':
+        results.push({
+          title: 'Experiment<br />Type',
+          type: 'autocomplete',
+          filter: true,
+          strict: true,
+          allowInvalid: false,
+          source: EXPERIMENT_TYPES,
+        });
+        break;
+      case 'aimed Resolution':
+        results.push({title: 'Aimed<br />Resolution'});
+        break;
+      case 'required Resolution':
+        results.push({title: 'Required<br />Resolution'});
+        break;
+      case 'beam diameter':
+        results.push({title: 'Beam<br />Diameter'});
+        break;
+      case 'number of positions':
+        results.push({title: 'Number of<br />positions'});
+        break;
+      case 'aimed multiplicity':
+        results.push({title: 'Aimed<br />multiplicity'});
+        break;
+      case 'aimed completeness':
+        results.push({title: 'Aimed<br />completeness'});
+        break;
+      case 'forced SPG':
+        results.push({
+          title: 'Forced<br />Spacegroup',
+          source: [
+            '',
+            ..._(SPACE_GROUPS)
+              .map((v) => v.name)
+              .value(),
+          ],
+          type: 'autocomplete',
+          filter: true,
+          strict: true,
+          allowInvalid: false,
+        });
+        break;
+      case 'radiation sensitivity':
+        results.push({title: 'Radiation<br />sensitivity'});
+        break;
+      case 'smiles':
+        results.push({ title: 'Smiles' });
+        break;
+      case 'total rot. angle':
+        results.push({title: 'Total<br />rot. angle'});
+        break;
+      case 'min osc. angle':
+        results.push({title: 'Min<br />osc. angle'});
+        break;
+      case 'observed resolution':
+        results.push({title: 'Observed<br />resolution'});
+        break;
+      case 'comments':
+        results.push({title: 'Comments'});
+        break;
+      case 'exposure time':
+        results.push({title: ''});
+        break;
+      case 'oscillation range':
+        results.push({title: 'Oscillation<br />range'});
+        break;
+      case 'energy':
+        results.push({title: 'Energy'});
+        break;
+      case 'transmission range':
+        results.push({title: 'Transmission<br />range'});
+        break;
+    }
+  
+  });
+
+  return results;
+
+}
+
 export function CSVShippingImporterTable({
   proposal,
   data,
   onDataChange,
   autoReplacements,
-  errors,
+  errors
 }: {
   shipping: Shipping;
   proposal: ProposalDetail;
@@ -390,6 +562,7 @@ export function CSVShippingImporterTable({
   autoReplacements: AutoReplacement[];
   errors: Error[];
 }) {
+  const columnsCSV: string[] = useShipmentColumns();
   const generateCellProperties = (row: number, col: number): CellMeta => {
     const colorClass = getClassForValue(col, data[row][col]);
     const errorsCell = getErrorsForCell(errors, row, col);
@@ -428,88 +601,8 @@ export function CSVShippingImporterTable({
     return { className: classNames, comment };
   };
 
-  const columns: Handsontable.ColumnSettings[] = [
-    {
-      title: 'Parcel<br />Name',
-    },
-    {
-      title: 'Container<br />Name',
-    },
-    {
-      title: 'Container<br />Type',
-      type: 'autocomplete',
-      source: CONTAINER_TYPES.map((c) => String(c)),
-      strict: true,
-      allowInvalid: false,
-      filter: true,
-    },
-    { title: 'Container<br />Position' },
-    {
-      title: 'Protein<br />Acronym',
-      type: 'autocomplete',
-      source: _(proposal.proteins)
-        .map((p) => p.acronym)
-        .uniq()
-        .value(),
-      strict: true,
-      allowInvalid: false,
-      filter: true,
-    },
-    { title: 'Sample<br />Acronym' },
-    { title: 'Pin<br />Barcode' },
-    {
-      title: 'Spacegroup',
-      source: [
-        '',
-        ..._(SPACE_GROUPS)
-          .map((v) => v.name)
-          .value(),
-      ],
-      type: 'autocomplete',
-      filter: true,
-      strict: true,
-      allowInvalid: false,
-    },
-    { title: 'A' },
-    { title: 'B' },
-    { title: 'C' },
-    { title: 'Alpha' },
-    { title: 'Beta' },
-    { title: 'Gamma' },
-    {
-      title: 'Experiment<br />Type',
-      type: 'autocomplete',
-      filter: true,
-      strict: true,
-      allowInvalid: false,
-      source: EXPERIMENT_TYPES,
-    },
-    { title: 'Aimed<br />Resolution' },
-    { title: 'Required<br />Resolution' },
-    { title: 'Beam<br />Diameter' },
-    { title: 'Number of<br />positions' },
-    { title: 'Aimed<br />multiplicity' },
-    { title: 'Aimed<br />completeness' },
-    {
-      title: 'Forced<br />Spacegroup',
-      source: [
-        '',
-        ..._(SPACE_GROUPS)
-          .map((v) => v.name)
-          .value(),
-      ],
-      type: 'autocomplete',
-      filter: true,
-      strict: true,
-      allowInvalid: false,
-    },
-    { title: 'Radiation<br />sensitivity' },
-    { title: 'Smiles' },
-    { title: 'Total<br />rot. angle' },
-    { title: 'Min<br />osc. angle' },
-    { title: 'Observed<br />resolution' },
-    { title: 'Comments' },
-  ];
+  const columns: Handsontable.ColumnSettings[] = initColumns(columnsCSV, proposal);
+
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   function handleChanges(
