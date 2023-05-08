@@ -55,13 +55,13 @@ export function MetadataCol(props: IMetadataProps) {
   );
 }
 
-export function MetadataRow(props: IMetadataProps) {
+export function MetadataRow(props: { auto?: boolean } & IMetadataProps) {
   return (
-    <Row className="metadata-list  g-0 me-2">
+    <Row className="metadata-list  g-0">
       {props.properties
         .filter((item) => item.test === undefined || item.test)
         .map((item) => (
-          <Col key={item.title}>
+          <Col key={item.title} md={props.auto ? 'auto' : undefined}>
             <MetadataItem
               {...item}
               truncate={
@@ -86,6 +86,9 @@ export function MetadataItem(props: IMetadataItemProps) {
 
   const elem = (
     <div
+      style={{
+        color: 'black',
+      }}
       className={classNames({
         'mx-1': true,
         'mb-2': true,
