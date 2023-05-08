@@ -279,6 +279,10 @@ function parseSample(
       axisRange: getNumber(15),
       minOscWidth: getNumber(16),
       observedResolution: getNumber(17),
+      energy: getNumber(20),
+      transmission: getNumber(21),
+      exposureTime: getNumber(22),
+      oscillationRange: getNumber(23)
     },
   };
 }
