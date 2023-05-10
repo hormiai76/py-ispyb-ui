@@ -36,6 +36,8 @@ import { EXPERIMENT_TYPES } from 'legacy/constants/experiments';
 import { useAuth } from 'hooks/useAuth';
 import { SPACE_GROUPS } from 'helpers/spacegroups';
 import Loading from 'components/Loading';
+import { useShipmentOnlineColumns } from 'legacy/hooks/site';
+
 
 type Param = {
   proposalName: string;
@@ -166,6 +168,156 @@ export default function ContainerEditPage() {
   );
 }
 
+export function initColumns(columnsCSV:string[], proposal:ProposalDetail, crystals:Crystal[], data:any[]) : Handsontable.ColumnSettings[] {
+  let results : Handsontable.ColumnSettings[] = [];
+  
+  results.push({title: '#', width: 30, readOnly: true});
+  columnsCSV.forEach((col) => {
+  
+    switch(col){
+      case 'protein acronym':
+        results.push({
+          title: 'Protein <br />Acronym',
+          type: 'autocomplete',
+          source: _(proposal.proteins)
+            .map((p) => p.acronym)
+            .uniq()
+            .value(),
+          strict: true,
+          allowInvalid: false,
+          filter: true,
+        });
+        break;
+      case 'sample name':
+        results.push({title: 'Sample<br /> Name'});
+        break;
+      case 'pin barcode':
+        results.push({title: 'Pin <br />BarCode'});
+        break;
+      case 'crystal form':
+        results.push({
+          title: 'Crystal Form',
+          source(query, callback) {
+            const protein = data[this.row][1];
+            if (protein) {
+              callback(
+                _.uniq([
+                  'Not set',
+                  ..._(crystals)
+                    .filter((c) => c.proteinVO.acronym === protein)
+                    .map(getCrystalInfo)
+                    .uniq()
+                    .sort()
+                    .value(),
+                ])
+              );
+            } else {
+              callback([]);
+            }
+          },
+          type: 'autocomplete',
+          strict: true,
+          allowInvalid: false,
+          filter: false,
+        });
+        break;
+        case 'experimentType':
+          results.push({
+            title: 'Exp.<br /> Type',
+            type: 'autocomplete',
+            filter: true,
+            strict: true,
+            allowInvalid: false,
+            source: EXPERIMENT_TYPES,
+          });
+          break;
+        case 'aimed Resolution':
+          results.push({title: 'Aimed<br />resolution'});
+          break;
+        case 'required Resolution':
+          results.push({title: 'Required<br />Resolution'});
+          break;
+        case 'beam diameter':
+          results.push({title: 'Beam<br />Diameter'});
+          break;
+        case 'number of positions':
+          results.push({title: 'Number of<br />positions'});
+          break;
+        case 'aimed multiplicity':
+          results.push({title: 'Aimed<br />multiplicity'});
+          break;
+        case 'aimed completeness':
+          results.push({title: 'Aimed<br />completeness'});
+          break;
+        case 'forced SPG':
+          results.push({
+            title: 'Forced <br /> Space G.',
+            source: [
+              '',
+              ..._(SPACE_GROUPS)
+                .map((v) => v.name)
+                .value(),
+            ],
+            type: 'autocomplete',
+            filter: true,
+            strict: true,
+            allowInvalid: false,
+          });
+          break;
+        case 'radiation sensitivity':
+          results.push({title: 'Radiation<br />Sensitivity'});
+          break;
+        case 'smiles':
+          results.push({ title: 'Smiles' });
+          break;
+        case 'total rot. angle':
+          results.push({title: 'Tot Rot. <br />Angle'});
+          break;
+        case 'min osc. angle':
+          results.push({title: 'Min Osc.<br />Angle'});
+          break;
+        case 'observed resolution':
+          results.push({title: 'Observed<br />resolution'});
+          break;
+        case 'comments':
+          results.push({title: 'Comments'});
+          break;
+        case 'exposure time':
+          results.push({title: 'Exposure<br />Time'});
+          break;
+        case 'oscillation range':
+          results.push({title: 'Oscillation<br />Range'});
+          break;
+        case 'energy':
+          results.push({title: 'Energy'});
+          break;
+        case 'transmission range':
+          results.push({title: 'Transmission<br />Range'});
+          break;
+        case 'ligands':
+          results.push({
+            title: 'Ligands',
+            type: 'autocomplete',
+            source: [
+              '',
+              ..._(proposal.ligands)
+                .map((l) => l.groupName)
+                .uniq()
+                .value(),
+            ],
+            filter: true,
+            strict: true,
+            allowInvalid: false,
+          });
+          break;
+    }
+  
+  });
+
+  return results;
+
+}
+
 function ContainerEditor({
   container,
   proposalName,
@@ -272,94 +424,8 @@ function ContainerEditor({
     setData(ndata);
   };
 
-  const columns: Handsontable.ColumnSettings[] = [
-    { title: '#', width: 30, readOnly: true },
-    {
-      title: 'Protein <br />Acronym',
-      type: 'autocomplete',
-      source: _(proposal.proteins)
-        .map((p) => p.acronym)
-        .uniq()
-        .value(),
-      strict: true,
-      allowInvalid: false,
-      filter: true,
-    },
-    { title: 'Sample<br /> Name' },
-    { title: 'Pin <br />BarCode' },
-    {
-      title: 'Crystal Form',
-      source(query, callback) {
-        const protein = data[this.row][1];
-        if (protein) {
-          callback(
-            _.uniq([
-              'Not set',
-              ..._(crystals)
-                .filter((c) => c.proteinVO.acronym === protein)
-                .map(getCrystalInfo)
-                .uniq()
-                .sort()
-                .value(),
-            ])
-          );
-        } else {
-          callback([]);
-        }
-      },
-      type: 'autocomplete',
-      strict: true,
-      allowInvalid: false,
-      filter: false,
-    },
-    {
-      title: 'Exp.<br /> Type',
-      type: 'autocomplete',
-      filter: true,
-      strict: true,
-      allowInvalid: false,
-      source: EXPERIMENT_TYPES,
-    },
-    { title: 'Aimed<br /> resolution' },
-    { title: 'Required<br /> resolution' },
-    { title: 'Beam <br />Diameter' },
-    { title: 'Number of<br /> positions' },
-    { title: 'Aimed<br /> multiplicity' },
-    { title: 'Aimed<br /> Completeness' },
-    {
-      title: 'Forced <br /> Space G.',
-      source: [
-        '',
-        ..._(SPACE_GROUPS)
-          .map((v) => v.name)
-          .value(),
-      ],
-      type: 'autocomplete',
-      filter: true,
-      strict: true,
-      allowInvalid: false,
-    },
-    { title: 'Radiation<br /> Sensitivity' },
-    { title: 'Smiles' },
-    { title: 'Tot Rot. <br />Angle' },
-    { title: 'Min Osc.<br />Angle' },
-    { title: 'Observed <br />resolution' },
-    { title: 'Comments' },
-    {
-      title: 'Ligands',
-      type: 'autocomplete',
-      source: [
-        '',
-        ..._(proposal.ligands)
-          .map((l) => l.groupName)
-          .uniq()
-          .value(),
-      ],
-      filter: true,
-      strict: true,
-      allowInvalid: false,
-    },
-  ];
+  const columnsCSV: string[] = useShipmentOnlineColumns();;
+  const columns: Handsontable.ColumnSettings[] = initColumns(columnsCSV, proposal, crystals, data);
 
   function handleChanges(
     changes: Handsontable.CellChange[],

@@ -9,45 +9,18 @@ import {
 } from 'legacy/pages/shipping/model';
 import { getContainerType } from '../samplehelper';
 
-export const FIELDS = [
-  'parcel name',
-  'container name',
-  'container type',
-  'container position',
-  'protein acronym',
-  'sample acronym',
-  'pin barcode',
-  'SPG',
-  'cellA',
-  'cellB',
-  'cellC',
-  'cellAlpha',
-  'cellBeta',
-  'cellGamma',
-  'experimentType',
-  'aimed Resolution',
-  'required Resolution',
-  'beam diameter',
-  'number of positions',
-  'aimed multiplicity',
-  'aimed completeness',
-  'forced SPG',
-  'radiation sensitivity',
-  'smiles',
-  'total rot. angle',
-  'min osc. angle',
-  'observed resolution',
-  'comments',
-] as const;
+
+export let FIELDS : string[];
 export type FieldName = typeof FIELDS[number];
-export const MANDATORY_FIELDS: FieldName[] = [
-  'parcel name',
-  'container name',
-  'container type',
-  'container position',
-  'protein acronym',
-  'sample acronym',
-];
+export let MANDATORY_FIELDS : FieldName[] = [
+    'parcel name',
+    'container name',
+    'container type',
+    'container position',
+    'protein acronym',
+    'sample acronym',
+  ];
+
 
 export type Value = string | number | undefined;
 export type Line = Value[];
@@ -62,25 +35,28 @@ export type AutoReplacement = {
 
 export function getField(
   line: Line,
-  field: FieldName
+  field: FieldName,
+  columns: string[]
 ): { index: number; value: Value } {
-  const index = FIELDS.indexOf(field);
+  const index = columns.indexOf(field);
   if (line.length > index) return { index, value: line[index] };
   return { index, value: undefined };
 }
 export function getFieldString(
   line: Line,
-  field: FieldName
+  field: FieldName,
+  columns: string[]
 ): { index: number; value: string | undefined } {
-  const v = getField(line, field);
+  const v = getField(line, field, columns);
 
   return { ...v, value: v.value === undefined ? undefined : String(v.value) };
 }
 export function getFieldNumber(
   line: Line,
-  field: FieldName
+  field: FieldName,
+  columns: string[]
 ): { index: number; value: number | undefined } {
-  const v = getField(line, field);
+  const v = getField(line, field, columns);
   return { ...v, value: v.value === undefined ? undefined : Number(v.value) };
 }
 
@@ -92,7 +68,8 @@ export function validateShipping(
   data: Line[],
   shipping: Shipping,
   proposal: ProposalDetail,
-  proposalSamples: ProposalSample[]
+  proposalSamples: ProposalSample[],
+  columns: string[]
 ): Error[] {
   const errors: Error[] = [];
 
@@ -110,8 +87,8 @@ export function validateShipping(
 
   const shippingSampleKeys = _(data)
     .map((row) => {
-      const protein = getField(row, 'protein acronym');
-      const sample = getField(row, 'sample acronym');
+      const protein = getField(row, 'protein acronym', columns);
+      const sample = getField(row, 'sample acronym', columns);
       return getSampleKey(protein.value, sample.value);
     })
     .value();
@@ -134,7 +111,7 @@ export function validateShipping(
 
   data.forEach((row, rowIndex) => {
     MANDATORY_FIELDS.forEach((field) => {
-      const fieldValue = getField(row, field);
+      const fieldValue = getField(row, field, columns);
       if (
         fieldValue.value === undefined ||
         String(fieldValue.value).trim().length === 0
@@ -147,7 +124,7 @@ export function validateShipping(
       }
     });
 
-    const containerName = getField(row, 'container name');
+    const containerName = getField(row, 'container name', columns);
     if (shippingContainerNames.includes(containerName.value)) {
       errors.push({
         row: rowIndex,
@@ -155,7 +132,8 @@ export function validateShipping(
         message: `Container '${containerName.value}' already exists in this shipment.`,
       });
     }
-    const parcelName = getField(row, 'parcel name');
+    const parcelName = getField(row, 'parcel name',
+    columns);
     if (parcelNames.includes(parcelName.value)) {
       errors.push({
         row: rowIndex,
@@ -163,8 +141,10 @@ export function validateShipping(
         message: `Parcel '${parcelName.value}' already exists in this shipment.`,
       });
     }
-    const protein = getField(row, 'protein acronym');
-    const sample = getField(row, 'sample acronym');
+    const protein = getField(row, 'protein acronym',
+    columns);
+    const sample = getField(row, 'sample acronym',
+    columns);
     const sampleKey = getSampleKey(protein.value, sample.value);
     if (shippingDuplicateSampleKeys.includes(sampleKey)) {
       errors.push({
@@ -216,7 +196,8 @@ export function validateShipping(
 export function autofixShipping(
   data: Line[],
   shipping: Shipping,
-  proposalSamples: ProposalSample[]
+  proposalSamples: ProposalSample[],
+  columns: string[]
 ): AutoReplacement[] {
   //PREPARE DATA
 
@@ -229,8 +210,8 @@ export function autofixShipping(
     .value();
   const shippingSampleKeys = _(data)
     .map((row) => {
-      const protein = getField(row, 'protein acronym');
-      const sample = getField(row, 'sample acronym');
+      const protein = getField(row, 'protein acronym', columns);
+      const sample = getField(row, 'sample acronym', columns);
       return getSampleKey(protein.value, sample.value);
     })
     .value();
@@ -276,8 +257,8 @@ export function autofixShipping(
   const replacements: AutoReplacement[] = [];
 
   data.forEach((line, row) => {
-    const protein = getField(line, 'protein acronym');
-    const sample = getField(line, 'sample acronym');
+    const protein = getField(line, 'protein acronym', columns);
+    const sample = getField(line, 'sample acronym', columns);
 
     //fix sample names
     if (protein.value !== undefined && sample.value !== undefined) {
@@ -307,19 +288,20 @@ export function autofixShipping(
 
 export function parseShippingCSV(
   data: Line[],
-  proposal: ProposalDetail
+  proposal: ProposalDetail,
+  columns: string[]
 ): ShippingDewar[] {
   return _(data)
-    .groupBy((line) => getField(line, 'parcel name').value)
+    .groupBy((line) => getField(line, 'parcel name', columns).value)
     .map((parcelLines, parcelName): ShippingDewar => {
       return {
         code: parcelName,
         type: 'Dewar',
         containerVOs: _(parcelLines)
-          .groupBy((line) => getField(line, 'container name').value)
+          .groupBy((line) => getField(line, 'container name', columns).value)
           .map((containerLines, containerName): ShippingContainer => {
             const containerType = getContainerType(
-              getFieldString(containerLines[0], 'container type').value
+              getFieldString(containerLines[0], 'container type', columns).value
             );
             return {
               code: containerName,
@@ -329,72 +311,94 @@ export function parseShippingCSV(
                 .map((sampleLine): ShippingSample => {
                   const proteinAcronym = getFieldString(
                     sampleLine,
-                    'protein acronym'
+                    'protein acronym', 
+                    columns
                   ).value;
                   const protein = proposal.proteins.filter(
                     (p) =>
                       p.acronym !== undefined && p.acronym === proteinAcronym
                   )[0];
                   return {
-                    name: getFieldString(sampleLine, 'sample acronym').value,
-                    location: getFieldString(sampleLine, 'container position')
+                    name: getFieldString(sampleLine, 'sample acronym', columns).value,
+                    location: getFieldString(sampleLine, 'container position', columns)
                       .value,
                     diffractionPlanVO: {
                       radiationSensitivity: getFieldNumber(
                         sampleLine,
-                        'radiation sensitivity'
+                        'radiation sensitivity',
+                        columns
                       ).value,
                       aimedCompleteness: getFieldNumber(
                         sampleLine,
-                        'aimed completeness'
+                        'aimed completeness',
+                        columns
                       ).value,
                       aimedMultiplicity: getFieldNumber(
                         sampleLine,
-                        'aimed multiplicity'
+                        'aimed multiplicity',
+                        columns
                       ).value,
                       aimedResolution: getFieldNumber(
                         sampleLine,
-                        'aimed Resolution'
+                        'aimed Resolution',
+                        columns
                       ).value,
                       requiredResolution: getFieldNumber(
                         sampleLine,
-                        'required Resolution'
+                        'required Resolution',
+                        columns
                       ).value,
-                      forcedSpaceGroup: getFieldString(sampleLine, 'forced SPG')
+                      forcedSpaceGroup: getFieldString(sampleLine, 'forced SPG',
+                      columns)
                         .value,
                       experimentKind: getFieldString(
                         sampleLine,
-                        'experimentType'
+                        'experimentType',
+                        columns
                       ).value,
                       observedResolution: getFieldNumber(
                         sampleLine,
-                        'observed resolution'
+                        'observed resolution',
+                        columns
                       ).value,
                       preferredBeamDiameter: getFieldNumber(
                         sampleLine,
-                        'beam diameter'
+                        'beam diameter',
+                        columns
                       ).value,
                       numberOfPositions: getFieldNumber(
                         sampleLine,
-                        'number of positions'
+                        'number of positions',
+                        columns
                       ).value,
-                      axisRange: getFieldNumber(sampleLine, 'total rot. angle')
+                      axisRange: getFieldNumber(sampleLine, 'total rot. angle',
+                      columns)
                         .value,
-                      minOscWidth: getFieldNumber(sampleLine, 'min osc. angle')
+                      minOscWidth: getFieldNumber(sampleLine, 'min osc. angle',
+                      columns)
                         .value,
                     },
                     crystalVO: {
-                      spaceGroup: getFieldString(sampleLine, 'SPG').value,
-                      cellA: getFieldNumber(sampleLine, 'cellA').value,
-                      cellB: getFieldNumber(sampleLine, 'cellB').value,
-                      cellC: getFieldNumber(sampleLine, 'cellC').value,
-                      cellAlpha: getFieldNumber(sampleLine, 'cellAlpha').value,
-                      cellBeta: getFieldNumber(sampleLine, 'cellBeta').value,
-                      cellGamma: getFieldNumber(sampleLine, 'cellGamma').value,
+                      spaceGroup: getFieldString(sampleLine, 'SPG',
+                      columns).value,
+                      cellA: getFieldNumber(sampleLine, 'cellA',
+                      columns).value,
+                      cellB: getFieldNumber(sampleLine, 'cellB',
+                      columns).value,
+                      cellC: getFieldNumber(sampleLine, 'cellC',
+                      columns).value,
+                      cellAlpha: getFieldNumber(sampleLine, 'cellAlpha',
+                      columns).value,
+                      cellBeta: getFieldNumber(sampleLine, 'cellBeta',
+                      columns).value,
+                      cellGamma: getFieldNumber(sampleLine, 'cellGamma',
+                      columns).value,
                       proteinVO: protein,
                     },
-                    smiles: getFieldString(sampleLine, 'smiles').value,
-                    comments: getFieldString(sampleLine, 'comments').value,
+                    smiles: getFieldString(sampleLine, 'smiles',
+                    columns).value,
+                    comments: getFieldString(sampleLine, 'comments',
+                    columns).value,
                   };
                 })
                 .value(),
