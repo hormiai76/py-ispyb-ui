@@ -177,6 +177,10 @@ export interface ShippingSample {
   smiles?: string;
   structureStage?: string;
   wireWidth?: string;
+  oscillationRange?: string;
+  energy?: string;
+  transmission?: string;
+  exposureTime?: string;
 }
 
 export interface ShippingSession {
