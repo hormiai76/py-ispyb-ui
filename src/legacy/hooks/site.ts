@@ -61,23 +61,3 @@ export function useGetBeamlines({
   }
   return beamlines;
 }
-
-/**
- * It returns the columns to be used in the shipment csv parser as they are defined in config/sites.hs
- * @returns Array with the columns
- */
-export function useShipmentColumns(): string[] {
-  const { site } = useAuth();
-  console.log(site.sampleCSVColumns);
-  return site.sampleCSVColumns;
-}
-
-/**
- * It returns the columns to be used in the shipment csv parser as they are defined in config/sites.hs
- * @returns Array with the columns
- */
-export function useShipmentOnlineColumns(): string[] {
-  const { site } = useAuth();
-  console.log(site.sampleOnlineColumns);
-  return site.sampleOnlineColumns;
-}
