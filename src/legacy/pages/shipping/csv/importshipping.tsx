@@ -300,7 +300,7 @@ export function CSVShippingImporter({
           . Examples can be found here:{' '}
           <a
             target="_blank"
-            href="https://raw.githubusercontent.com/ispyb/EXI/master/csv/example3.csv"
+            href="/templates/example.csv"
             rel="noreferrer"
           >
             example.csv
