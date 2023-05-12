@@ -40,6 +40,10 @@ function getData(sample: ShippingSample | undefined, index: number) {
       sample.diffractionPlanVO.observedResolution, //17
       sample.comments, //18
       sample.structureStage, //19
+      sample.diffractionPlanVO.energy, // 20
+      sample.diffractionPlanVO.transmission, //21
+      sample.diffractionPlanVO.exposureTime, //22
+      sample.diffractionPlanVO.oscillationRange //23
     ];
   } else return [index + 1];
 }
@@ -279,6 +283,10 @@ function parseSample(
       axisRange: getNumber(15),
       minOscWidth: getNumber(16),
       observedResolution: getNumber(17),
+      energy: getNumber(20),
+      transmission: getNumber(21),
+      exposureTime: getNumber(22),
+      oscillationRange: getNumber(23)
     },
   };
 }
