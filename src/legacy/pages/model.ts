@@ -141,7 +141,6 @@ export interface DiffractionPlan {
   comments?: string;
   complexity?: string;
   diffractionPlanId?: number;
-  energy?: number;
   estimateRadiationDamage?: number;
   experimentKind?: string;
   exposureTime?: number;
@@ -166,7 +165,6 @@ export interface DiffractionPlan {
   requiredResolution?: number;
   screeningResolution?: number;
   strategyOption?: string;
-  transmission?: number;
 }
 
 export interface Protein {

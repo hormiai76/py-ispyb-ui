@@ -509,10 +509,6 @@ export function CSVShippingImporterTable({
     { title: 'Min<br />osc. angle' },
     { title: 'Observed<br />resolution' },
     { title: 'Comments' },
-    { title: 'Energy' },
-    { title: 'Transmission<br />range' },
-    { title: 'Exposure<br /> Time' },
-    { title: 'Oscillation<br /> Range' }
   ];
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars

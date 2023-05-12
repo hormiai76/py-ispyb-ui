@@ -359,10 +359,6 @@ function ContainerEditor({
       strict: true,
       allowInvalid: false,
     },
-    {title: 'Energy'},
-    {title: 'Transmission<br />range'},
-    {title: 'Exposure<br /> Time'},
-    {title: 'Oscillation<br /> Range'},
   ];
 
   function handleChanges(
