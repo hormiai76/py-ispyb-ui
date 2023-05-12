@@ -38,6 +38,10 @@ export const FIELDS = [
   'min osc. angle',
   'observed resolution',
   'comments',
+  'energy',
+  'transmission',
+  'exposure time',
+  'oscillation range'
 ] as const;
 export type FieldName = typeof FIELDS[number];
 export const MANDATORY_FIELDS: FieldName[] = [
@@ -381,6 +385,14 @@ export function parseShippingCSV(
                       axisRange: getFieldNumber(sampleLine, 'total rot. angle')
                         .value,
                       minOscWidth: getFieldNumber(sampleLine, 'min osc. angle')
+                        .value,
+                      energy: getFieldNumber(sampleLine, 'energy')
+                        .value,
+                      transmission: getFieldNumber(sampleLine, 'transmission')
+                        .value,
+                      exposureTime: getFieldNumber(sampleLine, 'exposure time')
+                        .value,
+                      oscillationRange: getFieldNumber(sampleLine, 'oscillation range')
                         .value,
                     },
                     crystalVO: {
