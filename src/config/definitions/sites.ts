@@ -6,8 +6,6 @@ export interface SiteConfig {
   javaMode?: boolean;
   javaConfig?: JavaSiteConfig;
   javaName?: string;
-  sampleCSVColumns: Array<string>;
-  sampleOnlineColumns: Array<string>;
 }
 
 export interface JavaSiteConfig {
