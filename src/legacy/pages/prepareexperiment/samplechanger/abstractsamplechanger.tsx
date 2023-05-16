@@ -14,11 +14,11 @@ export abstract class AbstractSampleChanger {
   getChangerSVG(children: React.ReactNode) {
     return (
       <svg
-        style={{ maxWidth: 500 }}
+        style={{ maxWidth: 600 }}
         viewBox={`-${this.sampleChangerRadius + 5} -${
           this.sampleChangerRadius + 5
         } ${2 * (this.sampleChangerRadius + 5)} ${
-          2 * (this.sampleChangerRadius + 5)
+          2.6 * (this.sampleChangerRadius + 5)
         }`}
       >
         <circle
