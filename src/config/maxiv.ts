@@ -5,7 +5,7 @@ export const MAXIV: SiteConfig[] = [
     name: 'MAXIV-java',
     description: 'For MX',
     javaName: 'MAXIV',
-    host: 'https://ispyb-test.maxiv.lu.se',
+    host: 'https://ispyb.maxiv.lu.se',
     apiPrefix: '/ispyb/ispyb-ws/rest',
     javaMode: true,
     javaConfig: {
