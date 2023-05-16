@@ -5,7 +5,7 @@ export const MAXIV: SiteConfig[] = [
     name: 'MAXIV-java',
     description: 'For MX',
     javaName: 'MAXIV',
-    host: 'https://ispyb.maxiv.lu.se',
+    host: 'https://ispyb-test.maxiv.lu.se',
     apiPrefix: '/ispyb/ispyb-ws/rest',
     javaMode: true,
     javaConfig: {
@@ -13,7 +13,7 @@ export const MAXIV: SiteConfig[] = [
         MX: {
           beamlines: [
             { name: 'BioMAX', sampleChangerType: 'ISARA' },
-            { name: 'MicroMAX', sampleChangerType: 'ISARA' },
+            { name: 'MicroMAX', sampleChangerType: 'ISARA2' },
           ],
         },
       },

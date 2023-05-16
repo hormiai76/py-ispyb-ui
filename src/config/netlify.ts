@@ -64,7 +64,7 @@ export const NETLIFY: SiteConfig[] = [
             },
             {
               name: 'MicroMAX',
-              sampleChangerType: 'ISARA',
+              sampleChangerType: 'ISARA2',
             },
           ],
         },
