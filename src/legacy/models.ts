@@ -5,6 +5,7 @@ export type sampleChangerType =
   | 'FlexHCDDual'
   | 'FlexHCDUnipuckPlate'
   | 'ISARA'
+  | 'ISARA2'
   | 'P11SC';
 export const CONTAINER_TYPES = [
   'Spinepuck',
