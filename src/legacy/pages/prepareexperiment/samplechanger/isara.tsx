@@ -21,9 +21,9 @@ export class ISARA extends AbstractSampleChanger {
           stroke={'#000'}
         ></line>
         <rect
-          x={-this.sampleChangerRadius * 0.28}
+          x={-this.sampleChangerRadius * 0.48}
           y={this.sampleChangerRadius * 1.14}
-          width={this.sampleChangerRadius * 0.56}
+          width={this.sampleChangerRadius * 0.96}
           height={this.sampleChangerRadius * 0.44}
           stroke="#000"
           fill="#CCCCCC"
@@ -92,7 +92,7 @@ export class ISARA extends AbstractSampleChanger {
     const drawingPosition = this.getDrawingPosition(position);
     const minY = -this.sampleChangerRadius * 0.6;
     const lineStep = this.sampleChangerRadius * 0.28;
-    if (drawingPosition.nbColumn === 1) {
+    if (drawingPosition.nbColumn === 3) {
       return drawingPosition.line * lineStep + minY +30;
     } else {
       return drawingPosition.line * lineStep + minY;  
@@ -123,7 +123,7 @@ export class ISARA extends AbstractSampleChanger {
     if (position < 29) {
       return { line: 5, column: position - 27, nbColumn: 2 };
     }
-    return { line: 6, column: position - 29, nbColumn: 1 };
+    return { line: 6, column: position - 29, nbColumn: 3 };
   }
 
   getNbCell(): number {
@@ -131,7 +131,7 @@ export class ISARA extends AbstractSampleChanger {
   }
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   getNbContainerInCell(cell: number): number {
-    return 30;
+    return 32;
   }
 
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
