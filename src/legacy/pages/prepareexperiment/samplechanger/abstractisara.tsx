@@ -1,7 +1,16 @@
+import { range } from 'lodash';
 import { containerType } from 'legacy/models';
 import { AbstractSampleChanger } from './abstractsamplechanger';
 
-export class ISARA2 extends AbstractSampleChanger {
+export abstract class AbstractISARA extends AbstractSampleChanger {
+
+  constructor() {
+    super();
+    this.sampleChangerRadius = 100;
+    this.roomTemperatureCells = 3;
+    this.insideCells = 29;
+  }
+
   plotCells(): JSX.Element {
     return (
       <g>
@@ -21,9 +30,9 @@ export class ISARA2 extends AbstractSampleChanger {
           stroke={'#000'}
         ></line>
         <rect
-          x={-this.sampleChangerRadius * 0.28}
+          x={-this.sampleChangerRadius * 0.16 * this.roomTemperatureCells}
           y={this.sampleChangerRadius * 1.14}
-          width={this.sampleChangerRadius * 0.56}
+          width={this.sampleChangerRadius * 0.32 * this.roomTemperatureCells}
           height={this.sampleChangerRadius * 0.44}
           stroke="#000"
           fill="#CCCCCC"
@@ -37,7 +46,7 @@ export class ISARA2 extends AbstractSampleChanger {
     position: number
   ): { x: number; y: number; r: number; xtxt: number; ytxt: number } {
     const r = this.sampleChangerRadius / 8;
-
+    console.log("getContainerCoordinates -> position:" +position);
     const x = this.getX(position);
     const y = this.getY(position);
 
@@ -81,9 +90,13 @@ export class ISARA2 extends AbstractSampleChanger {
       ][drawingPosition.column];
     }
     if (drawingPosition.nbColumn === 1) {
+      console.log("this.sampleChangerRadius:" +this.sampleChangerRadius);
       return [
         -this.sampleChangerRadius * 0
       ][drawingPosition.column];
+    }
+    if (drawingPosition.nbColumn === 0) {
+      return -1;
     }
     return 0;
   }
@@ -92,8 +105,10 @@ export class ISARA2 extends AbstractSampleChanger {
     const drawingPosition = this.getDrawingPosition(position);
     const minY = -this.sampleChangerRadius * 0.6;
     const lineStep = this.sampleChangerRadius * 0.28;
-    if (drawingPosition.nbColumn === 1) {
+    if (drawingPosition.nbColumn === 1 || drawingPosition.nbColumn === 3) {
       return drawingPosition.line * lineStep + minY +30;
+    } else if (drawingPosition.nbColumn === 0) { 
+      return -1;
     } else {
       return drawingPosition.line * lineStep + minY;  
     }
@@ -103,7 +118,7 @@ export class ISARA2 extends AbstractSampleChanger {
   getDrawingPosition(position: number): {
     line: number;
     column: number;
-    nbColumn: 5 | 6 | 2 | 1 | 3;
+    nbColumn: 5 | 6 | 2 | 1 | 3 | 0;
   } {
     if (position < 5) {
       return { line: 0, column: position, nbColumn: 5 };
@@ -120,10 +135,23 @@ export class ISARA2 extends AbstractSampleChanger {
     if (position < 27) {
       return { line: 4, column: position - 22, nbColumn: 5 };
     }
-    if (position < 29) {
+    if (position < this.insideCells) {
       return { line: 5, column: position - 27, nbColumn: 2 };
     }
-    return { line: 6, column: position - 29, nbColumn: 1 };
+    if (position >= this.insideCells && position < 100) {
+      return {line: 7, column: 0, nbColumn: 0};
+    }
+    if (position >= 100){
+      if (this.roomTemperatureCells === 1) {
+        return { line: 6, column: position - this.insideCells, nbColumn: 1 };
+      }
+      if (this.roomTemperatureCells === 3) {
+        return { line: 6, column: position - this.insideCells, nbColumn: 3 };
+      } else {
+        return {line: 7, column: 0, nbColumn: 0};
+      }
+    }
+    return { line: 6, column: position - 29, nbColumn: 3 };
   }
 
   getNbCell(): number {
@@ -131,11 +159,12 @@ export class ISARA2 extends AbstractSampleChanger {
   }
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   getNbContainerInCell(cell: number): number {
-    return 30;
+    return this.insideCells + this.roomTemperatureCells + 100;
   }
 
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   getContainerType(cell: number, position: number): containerType {
     return 'Unipuck';
   }
+
 }

@@ -60,11 +60,11 @@ export const NETLIFY: SiteConfig[] = [
           beamlines: [
             {
               name: 'BioMAX',
-              sampleChangerType: 'ISARA',
+              sampleChangerType: 'IsaraRT3',
             },
             {
               name: 'MicroMAX',
-              sampleChangerType: 'ISARA2',
+              sampleChangerType: 'IsaraRT1',
             },
           ],
         },
