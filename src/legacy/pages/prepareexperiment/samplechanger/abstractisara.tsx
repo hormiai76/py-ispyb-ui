@@ -138,10 +138,7 @@ export abstract class AbstractISARA extends AbstractSampleChanger {
     if (position < this.insideCells) {
       return { line: 5, column: position - 27, nbColumn: 2 };
     }
-    if (position >= this.insideCells && position < 100) {
-      return {line: 7, column: 0, nbColumn: 0};
-    }
-    if (position >= 100){
+    if ((position >= this.insideCells) && (position < (this.insideCells +this.roomTemperatureCells))) {
       if (this.roomTemperatureCells === 1) {
         return { line: 6, column: position - this.insideCells, nbColumn: 1 };
       }
@@ -151,7 +148,8 @@ export abstract class AbstractISARA extends AbstractSampleChanger {
         return {line: 7, column: 0, nbColumn: 0};
       }
     }
-    return { line: 6, column: position - 29, nbColumn: 3 };
+    console.log("position:" +position);
+    return { line: 7, column: 0, nbColumn: 0 };
   }
 
   getNbCell(): number {
@@ -159,7 +157,7 @@ export abstract class AbstractISARA extends AbstractSampleChanger {
   }
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   getNbContainerInCell(cell: number): number {
-    return this.insideCells + this.roomTemperatureCells + 100;
+    return this.insideCells + this.roomTemperatureCells;
   }
 
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
