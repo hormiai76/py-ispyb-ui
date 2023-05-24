@@ -15,11 +15,11 @@ export function getSampleChanger(
   if (type === 'FlexHCDUnipuckPlate') {
     return new FlexHCDUnipuckPlate();
   }
-  if (type === 'ISARA') {
-    return new ISARA();
+  if (type === 'IsaraRT3') {
+    return new IsaraRT3();
   }
-  if (type === 'ISARA1') {
-    return new ISARA1();
+  if (type === 'IsaraRT1') {
+    return new IsaraRT1();
   }
   if (type === 'P11SC') {
     return new P11SC();
