@@ -12,8 +12,8 @@ export const MAXIV: SiteConfig[] = [
       techniques: {
         MX: {
           beamlines: [
-            { name: 'BioMAX', sampleChangerType: 'ISARA' },
-            { name: 'MicroMAX', sampleChangerType: 'ISARA2' },
+            { name: 'BioMAX', sampleChangerType: 'IsaraRT3' },
+            { name: 'MicroMAX', sampleChangerType: 'IsaraRT1' },
           ],
         },
       },

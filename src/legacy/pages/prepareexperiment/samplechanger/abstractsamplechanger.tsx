@@ -6,9 +6,13 @@ import { containerType } from 'legacy/models';
 
 export abstract class AbstractSampleChanger {
   sampleChangerRadius: number;
+  roomTemperatureCells: number;
+  insideCells: number;
 
   constructor() {
     this.sampleChangerRadius = 100;
+    this.roomTemperatureCells = 0;
+    this.insideCells = 29;
   }
 
   getChangerSVG(children: React.ReactNode) {

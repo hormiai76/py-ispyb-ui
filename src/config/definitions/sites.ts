@@ -16,7 +16,7 @@ export type sampleChangerType =
   | 'FlexHCDDual'
   | 'FlexHCDUnipuckPlate'
   | 'ISARA'
-  | 'ISARA2'
+  | 'ISARA1'
   | 'P11SC';
 export type containerType = 'Spinepuck' | 'Unipuck';
 
