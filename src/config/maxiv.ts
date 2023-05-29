@@ -3,17 +3,17 @@ import { SiteConfig } from 'config/definitions/sites';
 export const MAXIV: SiteConfig[] = [
   {
     name: 'MAXIV-java',
-    description: 'For MX/EM',
+    description: 'For MX',
     javaName: 'MAXIV',
-    host: 'https://ispyb.maxiv.lu.se',
+    host: 'https://ispyb-test.maxiv.lu.se',
     apiPrefix: '/ispyb/ispyb-ws/rest',
     javaMode: true,
     javaConfig: {
       techniques: {
         MX: {
           beamlines: [
-            { name: 'BioMAX', sampleChangerType: 'FlexHCDDual' },
-            { name: 'MicroMAX', sampleChangerType: 'FlexHCDUnipuckPlate' },
+            { name: 'BioMAX', sampleChangerType: 'IsaraRT3' },
+            { name: 'MicroMAX', sampleChangerType: 'IsaraRT1' },
           ],
         },
       },

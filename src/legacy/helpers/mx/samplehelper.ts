@@ -3,7 +3,7 @@ import { ContainerDewar } from 'legacy/pages/model';
 import { AbstractSampleChanger } from 'legacy/pages/prepareexperiment/samplechanger/abstractsamplechanger';
 import { FlexHCDDual } from 'legacy/pages/prepareexperiment/samplechanger/flexhcddual';
 import { FlexHCDUnipuckPlate } from 'legacy/pages/prepareexperiment/samplechanger/flexhdcunipuckplate';
-import { ISARA } from 'legacy/pages/prepareexperiment/samplechanger/isara';
+import { IsaraRT3, IsaraRT1 } from 'legacy/pages/prepareexperiment/samplechanger/isara';
 import { P11SC } from 'legacy/pages/prepareexperiment/samplechanger/p11sc';
 
 export function getSampleChanger(
@@ -15,8 +15,11 @@ export function getSampleChanger(
   if (type === 'FlexHCDUnipuckPlate') {
     return new FlexHCDUnipuckPlate();
   }
-  if (type === 'ISARA') {
-    return new ISARA();
+  if (type === 'IsaraRT3') {
+    return new IsaraRT3();
+  }
+  if (type === 'IsaraRT1') {
+    return new IsaraRT1();
   }
   if (type === 'P11SC') {
     return new P11SC();

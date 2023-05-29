@@ -47,4 +47,28 @@ export const NETLIFY: SiteConfig[] = [
       },
     },
   },
+  {
+    name: 'MAXIV',
+    description: 'For MX@MAXIV',
+    javaName: 'MAXIV',
+    host: 'https://ispyb.maxiv.lu.se',
+    apiPrefix: '/ispyb/ispyb-ws/rest',
+    javaMode: true,
+    javaConfig: {
+      techniques: {
+        MX: {
+          beamlines: [
+            {
+              name: 'BioMAX',
+              sampleChangerType: 'IsaraRT3',
+            },
+            {
+              name: 'MicroMAX',
+              sampleChangerType: 'IsaraRT1',
+            },
+          ],
+        },
+      },
+    },
+  },
 ];

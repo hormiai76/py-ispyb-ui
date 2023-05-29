@@ -20,7 +20,7 @@ export function JavaHeader() {
 
         <Nav>
           <PersonMenu />
-          <Logout />
+          <Logout/>
         </Nav>
       </Navbar.Collapse>
     </>
@@ -40,7 +40,8 @@ function PersonMenu() {
       id="admin-nav-dropdown"
       align="end"
     >
-      <NavDropdown.Header>{javaPerson?.roles}</NavDropdown.Header>
+      <NavDropdown.Header><div className='new-line'>{javaPerson?.roles.join('\n\r')}</div></NavDropdown.Header>
+      
     </NavDropdown>
   );
 }

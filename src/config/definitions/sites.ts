@@ -15,7 +15,8 @@ export interface JavaSiteConfig {
 export type sampleChangerType =
   | 'FlexHCDDual'
   | 'FlexHCDUnipuckPlate'
-  | 'ISARA'
+  | 'IsaraRT3'
+  | 'IsaraRT1'
   | 'P11SC';
 export type containerType = 'Spinepuck' | 'Unipuck';
 

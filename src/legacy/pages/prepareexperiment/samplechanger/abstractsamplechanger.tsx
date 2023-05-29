@@ -6,19 +6,23 @@ import { containerType } from 'legacy/models';
 
 export abstract class AbstractSampleChanger {
   sampleChangerRadius: number;
+  roomTemperatureCells: number;
+  insideCells: number;
 
   constructor() {
     this.sampleChangerRadius = 100;
+    this.roomTemperatureCells = 0;
+    this.insideCells = 29;
   }
 
   getChangerSVG(children: React.ReactNode) {
     return (
       <svg
-        style={{ maxWidth: 500 }}
+        style={{ maxWidth: 600 }}
         viewBox={`-${this.sampleChangerRadius + 5} -${
           this.sampleChangerRadius + 5
         } ${2 * (this.sampleChangerRadius + 5)} ${
-          2 * (this.sampleChangerRadius + 5)
+          2.6 * (this.sampleChangerRadius + 5)
         }`}
       >
         <circle
